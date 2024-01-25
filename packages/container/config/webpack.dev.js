@@ -23,9 +23,6 @@ const devConfig = {
       // if we want to delegate the dependencies list to webpack then below way can be used
       // shared: packagejson.dependencies,
     }),
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-    }),
   ],
 };
 module.exports = merge(commonConfig, devConfig);
