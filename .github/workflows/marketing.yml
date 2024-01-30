@@ -1,0 +1,31 @@
+name: deploy-marketing #name of the action , it can be anything relevent
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "packages/marketing/**" # for every push action on master branch that has something changed inside package/container
+defaults:
+  run:
+    working-directory: packages/marketing #This sets the default working directory for all run steps within the same job to be the 'packages/container' directory.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run build
+
+      - uses: shinyinc/action-aws-cli@v1.2
+      - run: aws s3 sync dist s3://${{secrets.AWS_S3__BUCKET_NAME}}/marketing/latest --debug
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_DEFAULT_REGION: "eu-north-1"
+      - run: aws cloudfront create-invalidation --distribution-id ${{secrets.AWS_DISTRIBUTION_ID }} --paths "/marketing/latest/remoteEntry.js" # to invalidate the cache for index.html on cloud front
+        env:
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_DEFAULT_REGION: "eu-north-1"
