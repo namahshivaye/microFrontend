@@ -1,16 +1,14 @@
-name: deploy-container
+name: deploy-container #name of the action , it can be anything relevent
 
 on:
   push:
     branches:
       - master
     paths:
-      - "packages/container/**"
-
+      - "packages/container/**" # for every push action on master branch that has something changed inside package/container
 defaults:
   run:
-    working-directory: packages/container
-
+    working-directory: packages/container #This sets the default working directory for all run steps within the same job to be the 'packages/container' directory.
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,4 +23,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          AWS_DEFAULT_REGION: ""
+          AWS_DEFAULT_REGION: "eu-north-1"
